@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Special 💖</title>
+
+<!-- Confetti CDN -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+    height:100vh;
+    overflow:hidden;
+    background: linear-gradient(-45deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
+}
+
+@keyframes gradientBG{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.page{
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    opacity:0;
+    transition:1s;
+}
+
+.page.active{
+    opacity:1;
+    z-index:1;
+}
+
+h1{
+    color:white;
+    font-size:50px;
+    text-shadow:2px 2px 10px rgba(0,0,0,0.4);
+}
+
+p{
+    color:white;
+    font-size:22px;
+    margin:20px;
+}
+
+button{
+    padding:15px 35px;
+    font-size:18px;
+    border:none;
+    border-radius:40px;
+    cursor:pointer;
+    margin:10px;
+    background:linear-gradient(45deg,#ff5c8d,#ff8fab);
+    color:white;
+    transition:0.3s;
+    box-shadow:0 0 15px rgba(255,92,141,0.6);
+}
+
+button:hover{
+    transform:scale(1.15);
+    box-shadow:0 0 25px rgba(255,92,141,1);
+}
+
+img{
+    width:240px;
+    margin:20px;
+    border-radius:20px;
+    box-shadow:0 0 25px rgba(255,255,255,0.6);
+    animation:floatImage 3s ease-in-out infinite;
+}
+
+@keyframes floatImage{
+    0%{transform:translateY(0px)}
+    50%{transform:translateY(-15px)}
+    100%{transform:translateY(0px)}
+}
+
+/* Falling Hearts */
+.heart{
+    position:fixed;
+    top:-10px;
+    font-size:22px;
+    animation:fall 4s linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(100vh);
+        opacity:0;
+    }
+}
+
+/* Popup */
+.popup{
+    position:fixed;
+    background:white;
+    padding:25px 40px;
+    border-radius:15px;
+    text-align:center;
+    display:none;
+    box-shadow:0 0 20px rgba(0,0,0,0.2);
+}
+
+.popup h2{
+    color:#ff5c8d;
+}
+
+/* Surprise Section */
+.surprise-container{
+    display:none;
+    margin-top:30px;
+    gap:40px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.gift-box{
+    width:130px;
+    height:130px;
+    position:relative;
+    cursor:pointer;
+    animation:pop 0.5s ease;
+}
+
+@keyframes pop{
+    from{transform:scale(0);}
+    to{transform:scale(1);}
+}
+
+.lid{
+    width:130px;
+    height:40px;
+    background:#ff5c8d;
+    position:absolute;
+    top:0;
+    border-radius:10px 10px 0 0;
+    transition:0.6s;
+}
+
+.box{
+    width:130px;
+    height:100px;
+    background:#ff8fab;
+    position:absolute;
+    bottom:0;
+    border-radius:0 0 15px 15px;
+}
+
+.gift-box.open .lid{
+    transform:translateY(-60px) rotate(-20deg);
+}
+
+.gift-box img{
+    width:130px;
+    height:130px;
+    object-fit:cover;
+    border-radius:15px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Background Music -->
+<audio id="bgMusic" loop>
+    <source src="music/song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Page 1 -->
+<div class="page active" id="page1">
+    <h1>Hey 😺</h1>
+    <p>Ready for a cute Valentine surprise?</p>
+     <img src="images/gif.gif">
+    <button onclick="nextPage(2)">Start Adventure 💕</button>
+</div>
+
+<!-- Page 2 -->
+<div class="page" id="page2">
+    <h1>Will you go on a date with me? 💖</h1>
+    <img src="images/m1.png">
+    <div>
+        <button id="yesBtn" onclick="yesAnswer()">Yes 😍</button>
+        <button id="noBtn">No 🙈</button>
+    </div>
+</div>
+
+<!-- Page 3 -->
+<div class="page" id="page3">
+    <h1>Happy Valentine’s Day ❤️</h1>
+    <img src="images/cat.png">
+    <p>You just made my day special 🌸💝</p>
+
+    <button onclick="showSurprise()">Surprise 🎁</button>
+
+    <div id="surpriseSection" class="surprise-container">
+
+        <div class="gift-box" onclick="openGift(this, 'images/quote.jpg')">
+            <div class="lid"></div>
+            <div class="box"></div>
+        </div>
+
+        <div class="gift-box" onclick="openGift(this, 'images/OIP.jpg')">
+            <div class="lid"></div>
+            <div class="box"></div>
+        </div>
+
+        <div class="gift-box" onclick="openGift(this, 'images/heart.jpg')">
+            <div class="lid"></div>
+            <div class="box"></div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popup">
+    <h2>Yayyyy!!! 💕</h2>
+    <p>You said YES 😍</p>
+</div>
+
+<script>
+
+// Page Navigation
+function nextPage(num){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById("page"+num).classList.add("active");
+
+    if(num===2){
+        document.getElementById("bgMusic").play();
+    }
+}
+
+// Moving No Button
+const noBtn=document.getElementById("noBtn");
+const yesBtn=document.getElementById("yesBtn");
+
+noBtn.addEventListener("mouseenter",()=>{
+    noBtn.style.position="absolute";
+    noBtn.style.left=Math.random()*80+"%";
+    noBtn.style.top=Math.random()*70+"%";
+    yesBtn.style.transform="scale(1.3)";
+});
+
+// Yes Button
+function yesAnswer(){
+    confetti({
+        particleCount:200,
+        spread:100,
+        origin:{y:0.6}
+    });
+
+    document.getElementById("popup").style.display="block";
+
+    setTimeout(()=>{
+        document.getElementById("popup").style.display="none";
+        nextPage(3);
+    },2000);
+}
+
+// Surprise Button
+function showSurprise(){
+    document.getElementById("surpriseSection").style.display="flex";
+
+    confetti({
+        particleCount:200,
+        spread:90,
+        origin:{y:0.6}
+    });
+}
+
+// Open Gift Box
+function openGift(element, imgPath){
+
+    if(element.classList.contains("open")) return;
+
+    element.classList.add("open");
+
+    setTimeout(()=>{
+        element.innerHTML = `<img src="${imgPath}">`;
+
+        confetti({
+            particleCount:100,
+            spread:70,
+            origin:{y:0.6}
+        });
+
+        if(imgPath.includes("surprise3")){
+            setTimeout(()=>{
+                alert("💌 You are my favorite person in this world ❤️");
+
+            },500);
+        }
+
+    },600);
+}
+
+// Falling Hearts
+function createHeart(){
+    const heart=document.createElement("div");
+    heart.innerHTML="💖";
+    heart.classList.add("heart");
+    heart.style.left=Math.random()*100+"vw";
+    document.body.appendChild(heart);
+
+    setTimeout(()=>heart.remove(),4000);
+}
+setInterval(createHeart,400);
+
+</script>
+
+</body>
+</html>
